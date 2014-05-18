@@ -1,13 +1,25 @@
 <html>
 <head>
 <title>My first Three.js app</title>
-<style>canvas{ width: 100%; height: 100% }</style>
+<style></style>
+<link rel="stylesheet" type="text/css" href="main.css">
 </head>
-  <body>
+<body>
   <script src="three.js"></script>
   <script src="main.js"></script>
-  <script src="apple.js"></script>
+  <script src="rotatemesh.js"></script>
+  <script src="primitives.js"></script>
   <script src="support.js"></script>
+  <script src="track_ball.js"></script>
   <script> window.onload = function (){main();}; </script>
+  <div id = "set">
+    <h1 align = "center"><b>Controls:</b></h1>
+    <h2><input id = "checkbox" type=  "checkbox"><b>Wireframe</b></input></h2>
+    <h2>
+      Light:
+      <input id = "light_up" type="button" value="+"/>
+      <input id = "light_down" type="button" value="-"/>
+    </h2>
+  </div>
 </body>
 </html>

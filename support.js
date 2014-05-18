@@ -1,17 +1,19 @@
-function getChar(event)
+function getChar(event) 
 {
-  if (event.which == null) {  // IE
+  if (event.which == null)
+  {
     if (event.keyCode < 32)
-      return null; // special symbol
-    return String.fromCharCode(event.keyCode)
+      return null;
+    return String.fromCharCode(event.keyCode);
   }
  
-  if (event.which!=0 && event.charCode!=0) { // not IE
+  if (event.which != 0 && event.charCode != 0) 
+  { // not IE
     if (event.which < 32)
-      return null; // special symbol
-    return String.fromCharCode(event.which); // another
+      return null; 
+    return String.fromCharCode(event.which);
   }
-  return null; // special symbol
+  return null; 
 }
 
 function DrawAxe(vec, col, scene)
@@ -24,9 +26,14 @@ function DrawAxe(vec, col, scene)
 
   line = new THREE.Line(axe, axe_mat); 
   scene.add(line);       
-};
-function
- degInRad( deg )
+}
+
+function degInRad( deg )
 {
   return deg * Math.PI / 180;
-};
+}
+
+function VecOut( vec )
+{
+  alert("(" + vec.x + ", " + vec.y + ", " + vec.z + ")");
+}
