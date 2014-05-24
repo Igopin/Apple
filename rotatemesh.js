@@ -28,7 +28,7 @@ function RotateGeometry(start, end, fx, fy, fz, num_vert_seg, num_horz_seg )
     y = fy(t);
     z = fz(t);
 
-    for (var u = horz_step; u < 2 * PI; u += horz_step)
+    for (var u = horz_step * 0; u < 2 * PI; u += horz_step)
     {
       sz = z * Math.cos(u) + x * Math.sin(u);
       sx = x * Math.cos(u) - z * Math.sin(u);

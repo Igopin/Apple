@@ -5,21 +5,34 @@
 <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
-  <script src="three.js"></script>
-  <script src="main.js"></script>
-  <script src="rotatemesh.js"></script>
-  <script src="primitives.js"></script>
-  <script src="support.js"></script>
-  <script src="track_ball.js"></script>
-  <script> window.onload = function (){main();}; </script>
+  <script type="text/javascript" src="three.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript" src="rotatemesh.js"></script>
+  <script type="text/javascript" src="primitives.js"></script>
+  <script type="text/javascript" src="support.js"></script>
+  <script type="text/javascript" src="track_ball.js"></script>
   <div id = "set">
-    <h1 align = "center"><b>Controls:</b></h1>
-    <h2><input id = "checkbox" type=  "checkbox"><b>Wireframe</b></input></h2>
+    <h2><input id = "checkbox1" type=  "checkbox"><b>Wireframe</b></input></h2>
+    <h2>Rotation:</h2>
+    <table>
+      <tr><th>X</th><th>Y</th><th>Z</th></tr>
+      <tr>
+      <th><input id = "checkbox2" type = "checkbox"/></th>
+      <th><input id = "checkbox3" type = "checkbox"/></th>
+      <th><input id = "checkbox4" type = "checkbox"/></th>
+      </tr>
+    </table>
     <h2>
       Light:
       <input id = "light_up" type="button" value="+"/>
       <input id = "light_down" type="button" value="-"/>
     </h2>
+    <h3>
+      Controls opacity:
+      <input id = "op_up" type="button" value="+"/>
+      <input id = "op_down" type="button" value="-"/>
+    </h3>
   </div>
+  <script> window.onload = function (){main();}; </script>
 </body>
 </html>
