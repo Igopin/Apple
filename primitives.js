@@ -1,5 +1,8 @@
 /* Rotate mesh primitives */
-function AppleI(rad, num_vert_seg, num_horz_seg, material)
+
+
+/* Cardiod apple geometry */ 
+function CardAppleVertices(rad, num_vert_seg, num_horz_seg)
 {
   var start, end, fx, fy, fz;
 
@@ -10,10 +13,17 @@ function AppleI(rad, num_vert_seg, num_horz_seg, material)
   fy = function(t){return (2 * rad * Math.cos(t) - rad * Math.cos(2 * t));};
   fz = function(t){return 0;};
 
-  return IndexRotateGeometry(RotateGeometry(start, end, fx, fy, fz, num_vert_seg, num_horz_seg), material);
+  return RotateGeometryVertices(start, end, fx, fy, fz, num_vert_seg, num_horz_seg);
 }
 
-function AppleII(A, B, angle, x_offset, num_vert_seg, num_horz_seg, material)
+/* Cardioid apple mesh */
+function AppleI(rad, num_vert_seg, num_horz_seg, material)
+{
+  var apple_geometry = SimpleIndex(CardAppleVertices(rad, num_vert_seg, num_horz_seg));
+  return MeshRotateGeometry(apple_geometry);
+}
+
+function EllipseAppleVertices(A, B, angle, x_offset, num_vert_seg, num_horz_seg)
 {
   var start, end, fx, fy, fz;
  
@@ -31,12 +41,20 @@ function AppleII(A, B, angle, x_offset, num_vert_seg, num_horz_seg, material)
                            A * Math.cos(t) * Math.sin(angle));};
   fz = function(t){return 0;};
 
-  return IndexRotateGeometry(RotateGeometry(start, end, fx, fy, fz, num_vert_seg, num_horz_seg), material);
+  return RotateGeometryVertices(start, end, fx, fy, fz, num_vert_seg, num_horz_seg);
 }
+
+function AppleII(A, B, angle, x_offset, num_vert_seg, num_horz_seg, material)
+{
+  var apple_geometry = SimpleIndex(EllipseAppleVertices(A, B, angle, x_offset, num_vert_seg, num_horz_seg));
+  return MeshRotateGeometry(apple_geometry, material);
+}
+
 
 function Branch(a, lenght, max_rad, num_vert_seg, num_horz_seg, material)
 {
-  return IndexRotateGeometry(BranchGeom( a, lenght, max_rad, num_vert_seg, num_horz_seg ), material);
+  var branch_geometry = SimpleIndex(BranchGeom( a, lenght, max_rad, num_vert_seg, num_horz_seg ), material);
+  return MeshRotateGeometry(branch_geometry, material);
 }
 
 function BranchGeom( a, lenght, max_rad, num_vert_seg, num_horz_seg )
@@ -72,7 +90,7 @@ function BranchGeom( a, lenght, max_rad, num_vert_seg, num_horz_seg )
     x += rad_step;
     y = a * Math.sqrt(t);
     z = 0;
-    for (var u = 0; u < 2 * PI; u += horz_step)
+    for (var u = (num_horz_seg > 97)  ? horz_step : 0; u < 2 * PI; u += horz_step)
     {
       sx = x * Math.cos(u) + z * Math.sin(u) + t;
       sz = z * Math.cos(u) - x * Math.sin(u);
@@ -83,55 +101,30 @@ function BranchGeom( a, lenght, max_rad, num_vert_seg, num_horz_seg )
   }
 
   /* Last vertix (nord pole) */  
-  x = x / 2;
+  x = (x + t) / 2;
   y = a * Math.sqrt(t - vert_step);
   z = 0; 
 
   branch_geometry.vertices.push(new THREE.Vector3(x, y, z));
   num_of_vertex++;
 
-  alert("Number of vertices:" + num_of_vertex);
+  //alert("Number of vertices:" + num_of_vertex);
   return {geometry: branch_geometry, num_vert_seg_: num_vert_seg, num_horz_seg_: num_horz_seg};
 }
 
-function TrueApple(num_vert_seg_1, num_horz_seg_1, num_vert_seg_2, num_horz_seg_2)
+function Leaf()
 {
-  var clear_app, wireframe_app,
-    res_app = new THREE.Geometry();
+  var x = 0, y = 0;
+  var heartShape = new THREE.Shape(); // From http://blog.burlock.org/html5/130-paths
 
-  // clear_app = AppleII(22, 30, -Math.PI / 12, -12, num_vert_seg_1, num_horz_seg_1,
-  //   new THREE.MeshPhongMaterial({ambient: 0x00ff00, color:0x00ff00, 
-  //   specular: 0x111111, shininess: 50, shading: THREE.SmoothShading}));
-
-  // wireframe_app = AppleII(22, 30, -Math.PI / 12, -12, num_vert_seg_2, num_horz_seg_2,
-  //   THREE.MeshPhongMaterial({color: 0x00ff00, wireframe: true}));
-
-  clear_app = AppleII(22, 30, -Math.PI / 12, -12, num_vert_seg_1, num_horz_seg_1, 0);
-
-  wireframe_app = AppleII(22, 30, -Math.PI / 12, -12, num_vert_seg_2, num_horz_seg_2, 0);
+  heartShape.moveTo(x, y); 
+  heartShape.bezierCurveTo(x + 1, y + 2, x + 3, y + 3, x + 3, y + 5);
+  heartShape.bezierCurveTo(x + 3, y + 6, x + 1.5, y + 8.5, x, y + 9);
+  heartShape.bezierCurveTo(x - 1, y + 7, x - 3, y + 6, x - 3, y + 4);
+  heartShape.bezierCurveTo(x - 3, y + 3, x - 1.5, y + 0.5, x, y);  //heartShape.lineTo( x + 5, y + 5);
   
-  num_v = 0;
-  /* Copy vertices */
-  num_v++;
-  for (i = 0; i < (num_horz_seg_2 / 2); i++)
-    for (j = 1; j < (num_vert_seg_2 / 4 + 2); j++)
-      res_app.vertices[i * num_horz_seg_2 + j] = 
-      wireframe_app.geometry.vertices[i * num_horz_seg_2 + j].clone(), num_v++;
-
-  alert(num_v);
-
-  num_t = 0;
-  /* Copy triangles */ 
-  for (i = 0; i < num_vert_seg_2 / 4; i++)
-    res_app.faces[i] = wireframe_app.geometry.faces[i].clone(), num_t++;
-
-  for (i = 1; i < num_horz_seg_2 / 2; i++)
-    for (j = 0; j < num_vert_seg_2 / 2; j++)
-      res_app.faces[i * num_horz_seg_2 + j] = 
-      wireframe_app.geometry.faces[i * num_horz_seg_2 + j].clone(), 
-      alert("Index" + num_t+ ":" + (i * num_horz_seg_2 + j)),num_t++;
-
-  alert(num_t);
-
-  return res_app;
-} 
+  var geometry = new THREE.ExtrudeGeometry( heartShape, {amount:0, bevelSize: 0} );
+  
+  geometry.computeVertexNormals();
+  return geometry;
+}

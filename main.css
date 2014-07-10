@@ -12,7 +12,7 @@ body
   background: transparent;
   z-index: 1;	
   padding: 10px;
-  opacity: .3;
+  opacity: .5;
 }
 
 canvas

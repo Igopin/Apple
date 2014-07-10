@@ -1,8 +1,14 @@
 /*********************************************************************************************
- *                                         GEOMETRY
+ *                                        CONSTANTS
  *********************************************************************************************/
 
-function RotateGeometry(start, end, fx, fy, fz, num_vert_seg, num_horz_seg )
+const BIG_UP = 17;
+const SMALL_DOWN = 69;
+
+/*********************************************************************************************
+ *                                         GEOMETRY
+ *********************************************************************************************/
+function RotateGeometryVertices(start, end, fx, fy, fz, num_vert_seg, num_horz_seg )
 {
   var x, y, z, sx, sy, PI = Math.PI,
       rotate_geometry = new THREE.Geometry(),
@@ -28,13 +34,14 @@ function RotateGeometry(start, end, fx, fy, fz, num_vert_seg, num_horz_seg )
     y = fy(t);
     z = fz(t);
 
-    for (var u = horz_step * 0; u < 2 * PI; u += horz_step)
+    //horz_end = (num_horz_seg > 97) ? (2 * PI + horz_step) : 2 * PI;
+    for (var u = (num_horz_seg > 97)  ? horz_step : 0; u < 2 * PI; u += horz_step)
     {
+   
       sz = z * Math.cos(u) + x * Math.sin(u);
       sx = x * Math.cos(u) - z * Math.sin(u);
       
       num_of_vertex++;
-      
       rotate_geometry.vertices.push(new THREE.Vector3(sx, y, sz));      
     }
   }
@@ -47,7 +54,6 @@ function RotateGeometry(start, end, fx, fy, fz, num_vert_seg, num_horz_seg )
   rotate_geometry.vertices.push(new THREE.Vector3(x, y, z));
   num_of_vertex++;
 
-  alert("Number of vertices:" + num_of_vertex);
   return {geometry: rotate_geometry, num_vert_seg_: num_vert_seg, num_horz_seg_: num_horz_seg};  
 }
 
@@ -108,19 +114,28 @@ function CreateTriangle( geometry, x, y, z )
   geometry.faces.push(new THREE.Face3(x, y, z, normals)); 
 }
 
-function IndexRotateGeometry( apple_params, material )
+function IndexRotateGeometryVertices( params, part )
 {
   var
-    apple_geometry = apple_params.geometry,
-    num_vert_seg = apple_params.num_vert_seg_,
-    num_horz_seg = apple_params.num_horz_seg_,
-    apple_material = material,
+    rotate_geometry = params.geometry,
+    num_vert_seg = params.num_vert_seg_,
+    num_horz_seg = params.num_horz_seg_,
     num_of_index = 0;
 
+  if (part == BIG_UP)
+    up_part = true, is_part = true;
+  else if (part == SMALL_DOWN)
+    up_part = false, is_part = true;
+  else
+    up_part = true, is_part = false;
 
-  for (i = 1; i < num_horz_seg; i++)
-    CreateTriangle(apple_geometry, i, 0, i + 1), num_of_index++;
-  CreateTriangle(apple_geometry, num_horz_seg, 0, 1);
+
+  if (up_part)
+  {
+    for (i = 1; i < num_horz_seg; i++)
+        CreateTriangle(rotate_geometry, i, 0, i + 1), num_of_index++;
+    CreateTriangle(rotate_geometry, num_horz_seg, 0, 1);
+  }
   
   num_of_index++;
 
@@ -136,40 +151,72 @@ function IndexRotateGeometry( apple_params, material )
     {
       num_of_index++;
 
+      if (is_part)
+        if (up_part ^ ((j < num_horz_seg / 2 + 1) || i < (num_vert_seg / 2 - 1)))
+          continue;
+
       /* New triangle vertices (each vertices is THREE.Vector3) */      
-      CreateTriangle(apple_geometry,  i * num_horz_seg + j,
-                                      i * num_horz_seg + (j + 1), 
-                                     (i + 1) * num_horz_seg + (j + 1));
+      CreateTriangle(rotate_geometry,  i * num_horz_seg + j,
+                                       i * num_horz_seg + (j + 1), 
+                                      (i + 1) * num_horz_seg + (j + 1));
       
 
-      CreateTriangle(apple_geometry,  i * num_horz_seg + j,
-                                     (i + 1) * num_horz_seg + (j + 1), 
-                                     (i + 1) * num_horz_seg + j);
+      CreateTriangle(rotate_geometry,  i * num_horz_seg + j,
+                                      (i + 1) * num_horz_seg + (j + 1), 
+                                      (i + 1) * num_horz_seg + j);
     }
 
     num_of_index++;
+    if (is_part)
+      if (up_part ^ (i < (num_vert_seg / 2 - 1)))
+        continue;
    
-    CreateTriangle(apple_geometry, (i + 1) * num_horz_seg,
-                                    i * num_horz_seg + 1, 
-                                   (i + 1) * num_horz_seg + 1);
+    CreateTriangle(rotate_geometry, (i + 1) * num_horz_seg,
+                                     i * num_horz_seg + 1, 
+                                    (i + 1) * num_horz_seg + 1);
     
-    CreateTriangle(apple_geometry, (i + 1) * num_horz_seg,
-                                   (i + 1) * num_horz_seg + 1, 
-                                   (i + 2) * num_horz_seg);
+    CreateTriangle(rotate_geometry, (i + 1) * num_horz_seg,
+                                    (i + 1) * num_horz_seg + 1, 
+                                    (i + 2) * num_horz_seg);
 
   }
  
   /* Pole indexing (south) */  
   for (i = 1; i < num_horz_seg; i++)
-    CreateTriangle(apple_geometry, (num_vert_seg - 2) * num_horz_seg + i, 
-                                   (num_vert_seg - 2) * num_horz_seg + i + 1, 
-                                   (num_vert_seg - 1) * num_horz_seg + 1), num_of_index++;
-  CreateTriangle(apple_geometry, (num_vert_seg - 1) * num_horz_seg + 1, 
-                                 (num_vert_seg - 1) * num_horz_seg, 
-                                 (num_vert_seg - 2) * num_horz_seg + 1), num_of_index++;
-
-  alert("Number of triangles:" + num_of_index);
-  var apple = new THREE.Mesh(apple_geometry, apple_material);
-
-  return apple;
+  {
+    if (is_part)
+      if (up_part ^ (i < (num_horz_seg / 2 + 1)))
+        continue;
+    CreateTriangle(rotate_geometry, (num_vert_seg - 2) * num_horz_seg + i, 
+                                    (num_vert_seg - 2) * num_horz_seg + i + 1, 
+                                    (num_vert_seg - 1) * num_horz_seg + 1), num_of_index++;
+ 
+  }
+  if (!up_part || !is_part) 
+    CreateTriangle(rotate_geometry, (num_vert_seg - 1) * num_horz_seg + 1, 
+                                    (num_vert_seg - 1) * num_horz_seg, 
+                                    (num_vert_seg - 2) * num_horz_seg + 1), num_of_index++;
+  return rotate_geometry;
 }
+
+function SimpleIndex( params )
+{
+  return IndexRotateGeometryVertices(params, 0);
+}
+
+/*********************************************************************************************
+ *                                         MESHING
+ *********************************************************************************************/
+function MeshRotateGeometry( rotate_geometry, material )
+{
+   var rotate_mesh = new THREE.Mesh(rotate_geometry, material);
+   return rotate_mesh;  
+}
+
+function PartOfGeometry( geometry, part, num_vert_seg, num_horz_seg )
+{
+  var part_geom = new THREE.Geometry();
+
+
+}
+

@@ -35,5 +35,12 @@ function degInRad( deg )
 
 function VecOut( vec )
 {
-  alert("(" + vec.x + ", " + vec.y + ", " + vec.z + ")");
+  var s = "(" + vec.x + ", " + vec.y + ", " + vec.z + ")";
+  return s;
+}
+
+function FaceOut( vec )
+{
+  var s = "(" + vec.a + ", " + vec.b + ", " + vec.c + ")";
+  return s;
 }
