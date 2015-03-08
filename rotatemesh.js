@@ -217,6 +217,4 @@ function PartOfGeometry( geometry, part, num_vert_seg, num_horz_seg )
 {
   var part_geom = new THREE.Geometry();
 
-
 }
-
