@@ -1,41 +1,13 @@
 <html>
-<head>
-<title>My first Three.js app</title>
-<style></style>
-<link rel="stylesheet" type="text/css" href="main.css">
-</head>
-<body>
-  <script type="text/javascript" src="three.js"></script>
-  <script type="text/javascript" src="main.js"></script>
-  <script type="text/javascript" src="rotatemesh.js"></script>
-  <script type="text/javascript" src="primitives.js"></script>
-  <script type="text/javascript" src="support.js"></script>
-  <script type="text/javascript" src="track_ball.js"></script>
-  <div id = "set">
-    <div>
-      <input id = "show_hide" type="checkbox">Show Controlls</input>
-    </div>
-    <div id = "subset">
-      <h2><input id = "checkbox1" type=  "checkbox"><b>Wireframe</b></input></h2>
-      <h2><input id = "checkbox5" type=  "checkbox"><b>Axis</b></input></h2>
-      <h2>Rotation:</h2>
-      <table>
-        <tr><th>X</th><th>Y</th><th>Z</th></tr>
-        <tr>
-        <th><input id = "checkbox2" type = "checkbox"/></th>
-        <th><input id = "checkbox3" type = "checkbox"/></th>
-        <th><input id = "checkbox4" type = "checkbox"/></th>
-        </tr>
-      </table>
-      <h2>
-        Light:
-        <input id = "light_up" type="button" value="+"/>
-        <input id = "light_down" type="button" value="-"/>
-      </h2>
-    </div>
-  </div>
-  <script> 
-    window.onload = function (){main();};
-  </script>
-</body>
+  <head>
+    <title>My first Three.js app</title>
+  </head>
+  <body>
+    <script type="text/javascript" src="three.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="rotatemesh.js"></script>
+    <script type="text/javascript" src="primitives.js"></script>
+    <script type="text/javascript" src="support.js"></script>
+    <script> window.onload = function (){main();}; </script>
+  </body>
 </html>

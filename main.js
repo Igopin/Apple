@@ -3,73 +3,28 @@ function main ()
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
   var renderer = new THREE.WebGLRenderer();
-  var controls = new THREE.TrackballControls( camera );
-  var
-    div = document.getElementById("set"), 
-    subdiv = document.getElementById("subset"), 
-    cb1 = document.getElementById("checkbox1"),
-    cb2 = document.getElementById("checkbox2"),
-    cb3 = document.getElementById("checkbox3"),
-    cb4 = document.getElementById("checkbox4"),
-    cb5 = document.getElementById("checkbox5"),
-    button = document.getElementById("show_hide"),
-    light_up_b = document.getElementById("light_up"),
-    light_down_b = document.getElementById("light_down");
   
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
   
-  //renderer.setClearColor(0x555555);
   renderer.setClearColor(0xffffff);
   renderer.shadowMapEnabled = true;  
 
-  cb1.checked = false; 
-  cb2.checked = false; 
-  cb3.checked = false; 
-  cb4.checked = false;
-  cb5.checked = true; 
-  button.checked = true;
-  
-  var is_axis = true, axis = new THREE.AxisHelper( 1000 ); 
-  scene.add(axis);
-
-  cb5.onclick = function()
-  {
-    if (is_axis)
-      scene.remove(axis), is_axis = false;
-    else
-      scene.add(axis), is_axis = true;
-  };
-
-  subdiv.style.visibility = "hidden";
-  button.onclick = function() 
-  {
-    if (subdiv.style.visibility == "hidden")
-      subdiv.style.visibility = "visible";
-    else
-      subdiv.style.visibility = "hidden";
-  };
- 
-  light_up_b.onclick = function(){ light.intensity+= 0.1; };
-  light_down_b.onclick = function(){ light.intensity-=0.1; };
-
-  
   /* LIGHT */  
-  var light = new THREE.DirectionalLight(0xffffff);
-//  light.castShadow = true;
-  light.position.set(100, 150, 0).normalize();
+  var light = new THREE.DirectionalLight();
+  light.castShadow = true;
+  light.position.set(100, 150, 0);
   scene.add(light); 
 
-
-  /* CONSTS */
-  var  NHZ_1 = 200,
-       NHZ_2 = 30,
-       LEAF_SIZE = 2.5,
-       BRANCH_LENGHT = 2,
-       BRANCH_WIDTH = 2,
-       SPECULAR = 0x111111,
-       LEAF_COLOR = 0x00ff00,
-       BRANCH_COLOR = 0x964b00;
+  var 
+    NHZ_1 = 100,
+    NHZ_2 = 30,
+    LEAF_SIZE = 2.5,
+    BRANCH_LENGHT = 2,
+    BRANCH_WIDTH = 2,
+    SPECULAR = 0x111111,
+    LEAF_COLOR = 0x00ff00,
+    BRANCH_COLOR = 0x964b00;
 
   /* PRIMITIVES */
   var leaf_geom = Leaf();
@@ -84,7 +39,7 @@ function main ()
 
   leaf.applyMatrix(new THREE.Matrix4().makeRotationY(Math.PI/2));
   leaf.rotation.x = Math.PI/4;
-  leaf.scale.set(LEAF_SIZE, LEAF_SIZE, 0.05);
+  leaf.scale.set(2.5, 2.50, 0.05);
   leaf.rotation.x += Math.PI/8;
   leaf.rotation.z -= 0.05;
   leaf.position.y = 34;
@@ -254,59 +209,8 @@ function main ()
         time += leaf_step;
       }
       else
-      {
-        time = 0, is_leaf_anim = false, 
-        subdiv.style.visibility = "visible";
-      }
+        time = 0, is_leaf_anim = false;
     }
-
-    if (!(is_show_anim || is_transp_anim || is_leaf_anim))
-    {
-      if (cb2.checked)
-      {
-        full_apple.rotation.x +=transp_rotate_step;
-        wireframe_apple.rotation.x += transp_rotate_step;
-        branch.rotation.x += transp_rotate_step;
-        part_apple.rotation.x += transp_rotate_step;    
-        leaf.applyMatrix(rot_matr_x);
-      }
-
-      if (cb3.checked)
-      { 
-        full_apple.rotation.y += transp_rotate_step;
-        wireframe_apple.rotation.y += transp_rotate_step;
-        branch.rotation.y += transp_rotate_step;
-        part_apple.rotation.y += transp_rotate_step;    
-        leaf.applyMatrix(rot_matr_y);
-      }
-
-      if (cb4.checked)
-      {
-        full_apple.rotation.z += transp_rotate_step;
-        wireframe_apple.rotation.z += transp_rotate_step;
-        branch.rotation.z += transp_rotate_step;
-        part_apple.rotation.z += transp_rotate_step;    
-        leaf.applyMatrix(rot_matr_z);
-      }
-
-      state = cb1.checked;
-      if (state != old_state)
-      {
-        if (state)
-        {
-          leaf.material.wireframe = true;
-          branch.material.wireframe = true;
-          full_apple.material.wireframe = true;
-        }
-        else
-        {    
-          leaf.material.wireframe = false;
-          branch.material.wireframe = false;
-          full_apple.material.wireframe = false;
-        }
-      }
-      old_state = state;
-    }    
   }
   
   function anim_loop() 
@@ -319,5 +223,4 @@ function main ()
  };
 
   anim_loop();
-
 };
